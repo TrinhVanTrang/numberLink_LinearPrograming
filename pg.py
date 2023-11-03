@@ -116,6 +116,7 @@ class NumberlinkUI:
                         screen, color, (x, y, rect_width, rect_height),
                     )
                 pygame.display.flip()
+                
             i+=1    
         file.close()
 

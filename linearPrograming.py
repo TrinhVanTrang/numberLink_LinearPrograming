@@ -192,9 +192,10 @@ class Linear_Programing:
 
     def input(self):
         solver = self.solver
+        endPoints=self.endPoints
         vars = self.vars
         # x(p, k) = 1 if p is end point
-        for ep in self.endPoints:
+        for ep in endPoints:
             x = ep[0]
             y = ep[1]
             k = ep[2]
@@ -248,7 +249,7 @@ class Linear_Programing:
 
 
 if __name__ == "__main__":
-    lp = Linear_Programing("3")
+    lp = Linear_Programing("2")
     lp.constraints()
     lp.input()
     print("Number of variables = ", lp.solver.NumVariables())
