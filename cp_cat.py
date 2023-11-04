@@ -186,7 +186,7 @@ class CP_SAT:
 
 
 if __name__ == "__main__":
-    cp_sat = CP_SAT("5")
+    cp_sat = CP_SAT("1")
     cp_sat.constraints()
     cp_sat.input()
     # print(cp_sat.model.ModelStats())

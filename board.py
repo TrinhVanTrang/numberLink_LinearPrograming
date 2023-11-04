@@ -44,7 +44,7 @@ class Board:
                 self.k_values.append(ep[2])
         self.k_values.sort()
         file.close()
-        self.ui=None
+        self.ui = None
 
         # self.ui = NumberlinkUI(
         #     self.width, self.height, self.k, self.endPoints, self.k_values, fileName
@@ -68,11 +68,16 @@ class Board:
         # for i in range(0, len(arr)):
         #     print(arr[i])
         self.ui = NumberlinkUI(
-            self.width, self.height, self.k, self.endPoints, self.k_values, self.inputFile
+            self.width,
+            self.height,
+            self.k,
+            self.endPoints,
+            self.k_values,
+            self.inputFile,
         )
         self.ui.render()
 
 
 if __name__ == "__main__":
-    board = Board("4")
+    board = Board("3")
     board.show()
