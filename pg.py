@@ -221,8 +221,8 @@ class NumberlinkUI:
         return
 
     def render(self):
-        self.showPaths_v2()
-        # self.showPaths()
+        # self.showPaths_v2()
+        self.showPaths()
         self.showEndPoint()
         self.createBoard()
 

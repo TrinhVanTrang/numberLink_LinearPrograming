@@ -57,8 +57,8 @@ class Board:
         # print(grid)
         w = self.width
         h = self.height
-        for i in range(w):
-            for j in range(h):
+        for i in range(h):
+            for j in range(w):
                 file.write(grid[i][j] + " ")
             file.write("\n")
         file.close()

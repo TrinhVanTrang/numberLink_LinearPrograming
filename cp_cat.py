@@ -44,22 +44,6 @@ class CP_SAT:
         # create CP solver
         # solver = cp_model.CpSolver()
 
-    # def exactlyKConditions(self, xp, nbOfP, k):
-    #     model = self.model
-    #     vars = self.vars
-    #     w = self.width
-    #     h = self.height
-    #     k_values = self.k_values
-    #     if k == 1:
-    #         model.AddBoolOr(xp == xq for xq in nbOfP)
-    #     elif k == 2:
-    #         for i in range(0, len(nbOfP) - 1):
-    #             for j in range(i + 1, len(nbOfP)):
-    #                 print()
-
-    #     self.model = model
-    #     return
-
     def constraints(self):
         #  bien phap nghiep vu ^~^
         w = self.width
@@ -71,16 +55,17 @@ class CP_SAT:
         grid = self.board.grid
 
         # create vars
-        for i in range(1, w + 1):
-            for j in range(1, h + 1):
+        for i in range(1, h + 1):
+            for j in range(1, w + 1):
                 p = self.toIndex(i, j)
                 var = model.NewIntVar(1, k, f"x_{p}")
                 vars[p] = var
+                
         # sum(1 | xp == xq) = 1 (p is end_point) or 2 (otherwise)
         #  q : q | Neightbor(p,q)
         second_vars = {}
-        for i in range(1, w + 1):
-            for j in range(1, h + 1):
+        for i in range(1, h + 1):
+            for j in range(1, w + 1):
                 p = self.toIndex(i, j)
                 # condition: xp == xq
                 sum_val = []
@@ -88,7 +73,9 @@ class CP_SAT:
                     q = self.toIndex(nb[0], nb[1])
                     second_vars[p, q] = model.NewBoolVar(f"val_{p}_{q}")
                     model.Add((vars[p] == vars[q])).OnlyEnforceIf(second_vars[p, q])
-                    model.Add((vars[p] != vars[q])).OnlyEnforceIf(second_vars[p, q].Not())
+                    model.Add((vars[p] != vars[q])).OnlyEnforceIf(
+                        second_vars[p, q].Not()
+                    )
                     sum_val.append(second_vars[p, q])
                 if grid[i - 1][j - 1] == "-":
                     model.Add(sum(sum_val) == 2)
@@ -106,6 +93,7 @@ class CP_SAT:
         model = self.model
         k_values = self.k_values
         # x(p) = k if p is end point
+        print(endPoints)
         for ep in endPoints:
             x = ep[0]
             y = ep[1]
@@ -137,8 +125,8 @@ class CP_SAT:
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
             # for i in range(w*h):
 
-            for i in range(1, w + 1):
-                for j in range(1, h + 1):
+            for i in range(1, h + 1):
+                for j in range(1, w + 1):
                     p = self.toIndex(i, j)
                     k = solver.Value(vars[p])
                     grid[i - 1][j - 1] = str(k_values[k - 1])
@@ -153,7 +141,7 @@ class CP_SAT:
     def toIndex(self, x, y):
         w = self.width
         h = self.height
-        if x <= w and y <= h:
+        if x <= h and y <= w:
             return w * (x - 1) + y
         else:
             print("Index is invalid!")
@@ -164,10 +152,10 @@ class CP_SAT:
         h = self.height
         if p % w == 0:
             j = w
-            i = p // h
+            i = p // w
         else:
             j = p % w
-            i = (p - (p % w)) // h + 1
+            i = (p - (p % w)) // w + 1
         return [i, j]
 
     def getNeighbors(self, x, y):
@@ -186,7 +174,7 @@ class CP_SAT:
 
 
 if __name__ == "__main__":
-    cp_sat = CP_SAT("1")
+    cp_sat = CP_SAT("test")
     cp_sat.constraints()
     cp_sat.input()
     # print(cp_sat.model.ModelStats())
