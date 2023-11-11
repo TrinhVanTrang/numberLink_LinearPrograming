@@ -1,5 +1,5 @@
 from linearPrograming import Linear_Programing
-from cp_sat import CP_SAT
+from cpsat import CP_SAT
 import os
 import numpy as np
 
