@@ -112,83 +112,83 @@ class Linear_Programing:
         # Version 1:
         # create second variables
         second_vars = self.second_vars
-        # for i in range(1, h + 1):
-        #     for j in range(1, j + 1):
-        #         p = self.toIndex(i, j)
-        #         for nb in self.getNeighbors(i, j):
-        #             q = self.toIndex(nb[0], nb[1])
-        #             if p < q:
-        #                 for k in self.k_values:
-        #                     x1 = vars[p, k]
-        #                     x2 = vars[q, k]
-        #                     # y(p, q, k) = 0 or 1
-        #                     y = solver.IntVar(0, 1, f"y_{p}_{q}_{k}")
-        #                     second_vars[p, q, k] = y
-        #                     # y(p, q, k) <= x(p, k)
-        #                     constraint_1 = solver.Constraint(-solver.infinity(), 0)
-        #                     constraint_1.SetCoefficient(y, 1)
-        #                     constraint_1.SetCoefficient(x1, -1)
-        #                     # y(p, q, k) <= x(q, k)
-        #                     constraint_2 = solver.Constraint(-solver.infinity(), 0)
-        #                     constraint_2.SetCoefficient(y, 1)
-        #                     constraint_2.SetCoefficient(x2, -1)
-        #                     # y(p, q, k) >= x(p, k) + x(q, k) - 1
-        #                     constraint_3 = solver.Constraint(-solver.infinity(), 1)
-        #                     constraint_3.SetCoefficient(y, -1)
-        #                     constraint_3.SetCoefficient(x1, 1)
-        #                     constraint_3.SetCoefficient(x2, 1)
+        for i in range(1, h + 1):
+            for j in range(1, j + 1):
+                p = self.toIndex(i, j)
+                for nb in self.getNeighbors(i, j):
+                    q = self.toIndex(nb[0], nb[1])
+                    if p < q:
+                        for k in self.k_values:
+                            x1 = vars[p, k]
+                            x2 = vars[q, k]
+                            # y(p, q, k) = 0 or 1
+                            y = solver.IntVar(0, 1, f"y_{p}_{q}_{k}")
+                            second_vars[p, q, k] = y
+                            # y(p, q, k) <= x(p, k)
+                            constraint_1 = solver.Constraint(-solver.infinity(), 0)
+                            constraint_1.SetCoefficient(y, 1)
+                            constraint_1.SetCoefficient(x1, -1)
+                            # y(p, q, k) <= x(q, k)
+                            constraint_2 = solver.Constraint(-solver.infinity(), 0)
+                            constraint_2.SetCoefficient(y, 1)
+                            constraint_2.SetCoefficient(x2, -1)
+                            # y(p, q, k) >= x(p, k) + x(q, k) - 1
+                            constraint_3 = solver.Constraint(-solver.infinity(), 1)
+                            constraint_3.SetCoefficient(y, -1)
+                            constraint_3.SetCoefficient(x1, 1)
+                            constraint_3.SetCoefficient(x2, 1)
 
-        # for i in range(1, h + 1):
-        #     for j in range(1, j + 1):
-        #         p = self.toIndex(i, j)
-        #         constraint_4 = None
-        #         if grid[i - 1][j - 1] != "-":
-        #             constraint_4 = solver.Constraint(1, 1)
-        #         else:
-        #             constraint_4 = solver.Constraint(2, 2)
-        #         for nb in self.getNeighbors(i, j):
-        #             q = self.toIndex(nb[0], nb[1])
-        #             for k in self.k_values:
-        #                 if p < q:
-        #                     y = second_vars[p, q, k]
-        #                 else:
-        #                     y = second_vars[q, p, k]
-        #                 constraint_4.SetCoefficient(y, 1)
+        for i in range(1, h + 1):
+            for j in range(1, j + 1):
+                p = self.toIndex(i, j)
+                constraint_4 = None
+                if grid[i - 1][j - 1] != "-":
+                    constraint_4 = solver.Constraint(1, 1)
+                else:
+                    constraint_4 = solver.Constraint(2, 2)
+                for nb in self.getNeighbors(i, j):
+                    q = self.toIndex(nb[0], nb[1])
+                    for k in self.k_values:
+                        if p < q:
+                            y = second_vars[p, q, k]
+                        else:
+                            y = second_vars[q, p, k]
+                        constraint_4.SetCoefficient(y, 1)
 
         # Version 2:
         # if x(p, k) is end_point:
         #     sum(x(q, k)) = 1
         # else:
         #     Each k: 2 * x(p, k) <= sum(x(q, k)) <= 2 * x(p, k) + M * (1 - x(p, k)) (M is number neghbor of x(p, k))
-        for i in range(1, h + 1):
-            for j in range(1, w + 1):
-                p = self.toIndex(i, j)
-                constraint_1 = None
-                constraint_2 = None
-                list_neighbors = self.getNeighbors(i, j)
-                # if x(p, k) is not end_point
-                if grid[i - 1][j - 1] == "-":
-                    for k in k_values:
-                        M = len(list_neighbors)
-                        # con_1: sum(x(q, k)) - [2 * x(p, k) + M * (1 - x(p, k))] <= 0
-                        # con_2: 2 * x(p, k) - sum(x(q, k)) <= 0
-                        constraint_1 = solver.Constraint(-solver.infinity(), M)
-                        constraint_2 = solver.Constraint(-solver.infinity(), 0)
-                        for nb in list_neighbors:
-                            q = self.toIndex(nb[0], nb[1])
+        # for i in range(1, h + 1):
+        #     for j in range(1, w + 1):
+        #         p = self.toIndex(i, j)
+        #         constraint_1 = None
+        #         constraint_2 = None
+        #         list_neighbors = self.getNeighbors(i, j)
+        #         # if x(p, k) is not end_point
+        #         if grid[i - 1][j - 1] == "-":
+        #             for k in k_values:
+        #                 M = len(list_neighbors)
+        #                 # con_1: sum(x(q, k)) - [2 * x(p, k) + M * (1 - x(p, k))] <= 0
+        #                 # con_2: 2 * x(p, k) - sum(x(q, k)) <= 0
+        #                 constraint_1 = solver.Constraint(-solver.infinity(), M)
+        #                 constraint_2 = solver.Constraint(-solver.infinity(), 0)
+        #                 for nb in list_neighbors:
+        #                     q = self.toIndex(nb[0], nb[1])
 
-                            constraint_1.SetCoefficient(vars[q, k], 1)
-                            constraint_2.SetCoefficient(vars[q, k], -1)
-                        constraint_1.SetCoefficient(vars[p, k], M - 2)
-                        constraint_2.SetCoefficient(vars[p, k], 2)
-                # x(p, k) is end_point
-                else:
-                    k = int(grid[i - 1][j - 1])
-                    # con_1: sum(x(q, k)) = 1
-                    constraint_1 = solver.Constraint(1, 1)
-                    for nb in list_neighbors:
-                        q = self.toIndex(nb[0], nb[1])
-                        constraint_1.SetCoefficient(vars[q, k], 1)
+        #                     constraint_1.SetCoefficient(vars[q, k], 1)
+        #                     constraint_2.SetCoefficient(vars[q, k], -1)
+        #                 constraint_1.SetCoefficient(vars[p, k], M - 2)
+        #                 constraint_2.SetCoefficient(vars[p, k], 2)
+        #         # x(p, k) is end_point
+        #         else:
+        #             k = int(grid[i - 1][j - 1])
+        #             # con_1: sum(x(q, k)) = 1
+        #             constraint_1 = solver.Constraint(1, 1)
+        #             for nb in list_neighbors:
+        #                 q = self.toIndex(nb[0], nb[1])
+        #                 constraint_1.SetCoefficient(vars[q, k], 1)
         # Version 3: Cp_SAT solver
 
         self.vars = vars
@@ -215,8 +215,9 @@ class Linear_Programing:
         w = self.width
         h = self.height
         solver = self.solver
-        timeout=10000000
-        solver.SetTimeLimit(timeout)
+        timeout=1200000
+        # solver.SetTimeLimit(timeout)
+        solver.set_time_limit(timeout)
         t1 = time.time()
         # print("Time before solve: ",solver.WallTime())
         status = solver.Solve()
@@ -228,7 +229,7 @@ class Linear_Programing:
             # print("Solution:")
             # print("Objective value =", solver.Objective().Value())
             print("Solving time: ",solvingTime , "ms.")
-            self.solvingTime=solvingTime
+            self.solvingTime=str(solvingTime)
             count = 0
             for v in solver.variables():
                 if count >= w * h:
@@ -252,15 +253,21 @@ class Linear_Programing:
             # self.board.show()
 
         else:
-            if (time.time()-t1)*1000 >=timeout:
+            tr=(time.time()-t1)*1000
+            # print(tr)
+            # print(status,' ',pywraplp.Solver.FEASIBLE)
+            if status==6:
                 print("Solve time out!")
                 self.solvingTime="TIME OUT"
+            # if tr >= timeout:
+            #     print("Solve time out!")
+            #     self.solvingTime="TIME OUT"
             else :
                 print("The problem does not have an optimal solution.")
 
 
 if __name__ == "__main__":
-    lp = Linear_Programing("4")
+    lp = Linear_Programing("1")
     lp.constraints()
     lp.input()
     print("Number of variables = ", lp.solver.NumVariables())

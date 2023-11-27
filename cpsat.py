@@ -142,7 +142,7 @@ class CP_SAT:
             # self.board.show()
 
         else:
-            print(time.time() - t1)
+            # print(time.time() - t1)
             if time.time() - t1 >= timeout:
                 print("Solve timeout!")
                 self.solvingTime="TIME OUT"
@@ -186,7 +186,7 @@ class CP_SAT:
 
 
 if __name__ == "__main__":
-    cp_sat = CP_SAT("190")
+    cp_sat = CP_SAT("4")
     cp_sat.constraints()
     cp_sat.input()
     # print(cp_sat.model.ModelStats())
